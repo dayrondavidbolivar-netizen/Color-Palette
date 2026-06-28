@@ -43,6 +43,8 @@ function rgbToHsl(r,g,b){
     lightness : Math.round (lightness * 100)
   };
 
+}
+
 
   function colorGenerator(){
     const rgb = rgbGenerator();
@@ -54,14 +56,14 @@ function rgbToHsl(r,g,b){
     }
   }
 
-}
+
 
  function renderPalette(quantity){
     const container = document.querySelector('.paletteGenerator');
     container.innerHTML ='';
 
     for (let i = 0; i < quantity; i++){
-        const color = colorGenerator;
+        const color = colorGenerator();
         const {r,g,b} = color.rgb;
         const {hue,saturation,lightness} = color.hsl;
 
@@ -83,9 +85,28 @@ function rgbToHsl(r,g,b){
 
 
 
-
+        container.appendChild(card);
 
     }
     
   }
 
+const paletteGeneratorBtn = document.querySelector('.paletteGeneratorBtn');
+
+paletteGeneratorBtn.addEventListener('click', function() {renderPalette(userSelectSize)});
+
+let userSelectSize = 6;
+const sizeBtn = document.querySelectorAll('.sizeBtn');
+
+sizeBtn.forEach(function(btn) {
+
+    btn.addEventListener('click', function(){
+        userSelectSize = Number(btn.dataset.size);
+        sizeBtn.forEach(function(b){
+            b.classList.remove('active');
+        })
+
+        btn.classList.add('active');
+        renderPalette(userSelectSize);
+    })
+});
