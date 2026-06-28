@@ -53,7 +53,39 @@ function rgbToHsl(r,g,b){
         hsl:hsl,
     }
   }
+
 }
 
+ function renderPalette(quantity){
+    const container = document.querySelector('.paletteGenerator');
+    container.innerHTML ='';
 
+    for (let i = 0; i < quantity; i++){
+        const color = colorGenerator;
+        const {r,g,b} = color.rgb;
+        const {hue,saturation,lightness} = color.hsl;
+
+        const card  = document.createElement('div');
+        card.classList.add("ColorCard");
+        card.style.backgroundColor = `rgb(${r}, ${g}, ${b})`;
+
+        card.innerHTML = `
+            <div class="colorInfo">
+                <span class="rgbLabel">RGB</span>
+                <span class="rgbValue">${r}, ${g}, ${b}</span>
+                <span class="hslLabel">HSL</span>
+                <span class="hslValue">${hue}, ${saturation}, ${lightness}</span>
+                <button class="lockBtn">🔒</button>
+            </div>
+            <span class="colorName">COLOR NAME</span>
+        `;
+
+
+
+
+
+
+    }
+    
+  }
 
