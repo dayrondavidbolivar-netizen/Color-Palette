@@ -66,6 +66,8 @@ function rgbToHsl(r,g,b){
         const color = colorGenerator();
         const {r,g,b} = color.rgb;
         const {hue,saturation,lightness} = color.hsl;
+        const hex = rgbToHex(r,g,b);
+        const colorName = ntc.name(hex)[1];
 
         const card  = document.createElement('div');
         card.classList.add("colorCard");
@@ -79,7 +81,7 @@ function rgbToHsl(r,g,b){
                 <span class="hslValue">${hue}, ${saturation}, ${lightness}</span>
                 <button class="lockBtn">🔒</button>
             </div>
-            <span class="colorName">COLOR NAME</span>
+            <span class="colorName">${colorName}</span>
         `;
 
 
@@ -89,6 +91,8 @@ function rgbToHsl(r,g,b){
 
     }
     
+    updateGradient();
+
   }
 
 const paletteGeneratorBtn = document.querySelector('.paletteGeneratorBtn');
@@ -110,3 +114,22 @@ sizeBtn.forEach(function(btn) {
         renderPalette(userSelectSize);
     })
 });
+
+function updateGradient(){
+    const footer = document.querySelector('.gradientFooter');
+    const cards = document.querySelectorAll('.colorCard');
+    const colors = [];
+
+    cards.forEach(function(card){
+        colors.push(card.style.backgroundColor);
+    });
+
+    footer.style.background = `linear-gradient(to right, ${colors.join(', ')})`;
+
+}
+
+function rgbToHex(r,g,b){
+    return '#' + [r,g,b].map(function(value){
+        return value.toString(16).padStart(2,'0');
+    }).join('');
+}
