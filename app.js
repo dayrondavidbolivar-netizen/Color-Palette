@@ -88,6 +88,19 @@ function rgbToHsl(r,g,b){
 
 
         container.appendChild(card);
+        const rgbValue = card.querySelector('.rgbValue');
+        const hslValue = card.querySelector('.hslValue');
+
+    rgbValue.addEventListener('click', function() {
+    navigator.clipboard.writeText(`${r}, ${g}, ${b}`);
+    showToast('RGB copied!');
+});
+
+    hslValue.addEventListener('click', function() {
+    navigator.clipboard.writeText(`${hue}, ${saturation}%, ${lightness}%`);
+    showToast('HSL copied!');
+});
+
 
     }
     
@@ -132,4 +145,14 @@ function rgbToHex(r,g,b){
     return '#' + [r,g,b].map(function(value){
         return value.toString(16).padStart(2,'0');
     }).join('');
+}
+
+function showToast(message) {
+    const toast = document.querySelector('.toast');
+    toast.textContent = message;
+    toast.classList.add('visible');
+    setTimeout(function() {
+    toast.classList.remove('visible');
+    }, 2000);
+
 }
