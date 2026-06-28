@@ -68,7 +68,7 @@ function rgbToHsl(r,g,b){
         const {hue,saturation,lightness} = color.hsl;
 
         const card  = document.createElement('div');
-        card.classList.add("ColorCard");
+        card.classList.add("colorCard");
         card.style.backgroundColor = `rgb(${r}, ${g}, ${b})`;
 
         card.innerHTML = `
