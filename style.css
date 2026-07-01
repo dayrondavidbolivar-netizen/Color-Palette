@@ -11,7 +11,7 @@ header {
     display: flex;
     align-items: center;
     padding: 24px;
-    height: 72px;
+    height: 92px;
     border-bottom: 1px solid #e0e0e0;
     background-color: #ffffff;
     gap: 12px;
@@ -154,7 +154,7 @@ header {
 }
 
 .gradientFooter {
-    height: 50px;
+    height: 100px;
     width: 100%;
 }
 
