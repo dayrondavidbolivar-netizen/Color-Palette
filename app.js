@@ -100,7 +100,7 @@ function renderPalette() {
                 <button type="button" class="hslValue" aria-labelledby="hslLabel-${index}">${hsl.hue}, ${hsl.saturation}%, ${hsl.lightness}%</button>
                 <button type="button" class="lockBtn${locked ? ' locked' : ''}" aria-pressed="${locked}" aria-label="${locked ? 'Unlock' : 'Lock'} this color">${locked ? '🔒' : '🔓'}</button>
             </div>
-            <span class="colorName">${colorName} — ${hex.toUpperCase()}</span>
+            <span class="colorName">${colorName}</span>
         `;
 
         container.appendChild(card);
