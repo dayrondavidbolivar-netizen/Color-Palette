@@ -89,12 +89,19 @@ function rgbToHsl(r,g,b){
             saturation = generated.hsl.saturation;
             lightness = generated.hsl.lightness;
         }
+
+
+       
         const hex = rgbToHex(r,g,b);
         const colorName = ntc.name(hex)[1];
 
         const card  = document.createElement('div');
         card.classList.add("colorCard");
         card.style.backgroundColor = `rgb(${r}, ${g}, ${b})`;
+
+        const textColor = getTextColor(r, g, b);
+        card.style.color = textColor;
+
 
         card.innerHTML = `
             <div class="colorInfo">
@@ -224,3 +231,9 @@ savedPaletteBtn.addEventListener('click', function(){
     paletteName.value = '';
 
 });
+
+function getTextColor (r,g,b){
+    const luminance = (0.299 * r + 0.587 * g + 0.114 * b);
+    return luminance > 190 ? '#000000' : '#ffffff';
+
+}
