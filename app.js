@@ -191,3 +191,36 @@ function showToast(message) {
     }, 2000);
 
 }
+
+const savedPaletteBtn = document.querySelector('.savedPaletteBtn');
+const paletteName = document.querySelector('.paletteName');
+
+savedPaletteBtn.addEventListener('click', function(){
+
+    const name = paletteName.value;
+
+    if (!name){
+        showToast('Please enter a palette name');
+        return;
+    }
+
+    const cards = document.querySelectorAll('.colorCard');
+    const colors = [];
+
+    cards.forEach(function(card) {
+        colors.push(card.style.backgroundColor)
+    });
+
+    const palette ={
+        name : name,
+        colors : colors,
+    }
+
+    const savedPalettes = JSON.parse(localStorage.getItem('palettes') || '[]');
+
+    savedPalettes.push(palette);
+    localStorage.setItem('palettes', JSON.stringify(savedPalettes));
+    showToast(`Palette "${name}" saved!`);
+    paletteName.value = '';
+
+});
