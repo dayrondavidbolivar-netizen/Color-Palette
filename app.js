@@ -98,8 +98,11 @@ function renderPalette() {
                 <button type="button" class="rgbValue" aria-labelledby="rgbLabel-${index}">${r}, ${g}, ${b}</button>
                 <span class="hslLabel" id="hslLabel-${index}">HSL</span>
                 <button type="button" class="hslValue" aria-labelledby="hslLabel-${index}">${hsl.hue}, ${hsl.saturation}%, ${hsl.lightness}%</button>
-                <button type="button" class="lockBtn${locked ? ' locked' : ''}" aria-pressed="${locked}" aria-label="${locked ? 'Unlock' : 'Lock'} this color">${locked ? '🔒' : '🔓'}</button>
-            </div>
+                <button type="button" class="lockBtn${locked ? ' locked' : ''}" aria-pressed="${locked}" aria-label="${locked ? 'Unlock' : 'Lock'} this color">
+                <img src="Icons/candado.png" class="lockIcon${locked ? '' : ' unlocked'}" alt="">
+                </button>   
+
+                 </div>
             <span class="colorName">${colorName}</span>
         `;
 

@@ -193,3 +193,15 @@ header {
     white-space: nowrap;
     border: 0;
 }
+
+.lockIcon,
+.saveIcon {
+    width: 16px;
+    height: 16px;
+    display: block;
+}
+
+.lockIcon.unlocked {
+    opacity: 0.35;
+    filter: grayscale(100%);
+}
