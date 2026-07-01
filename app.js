@@ -63,9 +63,32 @@ function rgbToHsl(r,g,b){
     container.innerHTML ='';
 
     for (let i = 0; i < quantity; i++){
-        const color = colorGenerator();
-        const {r,g,b} = color.rgb;
-        const {hue,saturation,lightness} = color.hsl;
+
+        let color = colorGenerator();
+
+        if (lockedColors[i]) {
+            color = lockedColors[i];
+        } else {color = colorGenerator()};
+
+            let r, g, b, hue, saturation, lightness;
+
+        if (lockedColors[i]) {
+            r = lockedColors[i].r;
+            g = lockedColors[i].g;
+            b = lockedColors[i].b;
+            const hsl = rgbToHsl(r, g, b);
+            hue = hsl.hue;
+            saturation = hsl.saturation;
+            lightness = hsl.lightness;
+        } else {
+            const generated = colorGenerator();
+            r = generated.rgb.r;
+            g = generated.rgb.g;
+            b = generated.rgb.b;
+            hue = generated.hsl.hue;
+            saturation = generated.hsl.saturation;
+            lightness = generated.hsl.lightness;
+        }
         const hex = rgbToHex(r,g,b);
         const colorName = ntc.name(hex)[1];
 
@@ -100,6 +123,17 @@ function rgbToHsl(r,g,b){
     navigator.clipboard.writeText(`${hue}, ${saturation}%, ${lightness}%`);
     showToast('HSL copied!');
 });
+      const lockBtn = card.querySelector('.lockBtn');
+
+      lockBtn.addEventListener('click', function() {
+        if (lockedColors[i]) {
+            lockedColors[i] = null;
+            lockBtn.classList.remove('locked');
+        } else {
+            lockedColors[i] = {r,g,b};
+            lockBtn.classList.add('locked');
+        }
+      });
 
 
     }
@@ -113,6 +147,7 @@ const paletteGeneratorBtn = document.querySelector('.paletteGeneratorBtn');
 paletteGeneratorBtn.addEventListener('click', function() {renderPalette(userSelectSize)});
 
 let userSelectSize = 6;
+let lockedColors = [];
 const sizeBtn = document.querySelectorAll('.sizeBtn');
 
 sizeBtn.forEach(function(btn) {
