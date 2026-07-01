@@ -1,239 +1,179 @@
-function rgbGenerator (){
-
-    const r = Math.floor(Math.random() * 256);
-    const g = Math.floor(Math.random() * 256);
-    const b = Math.floor (Math.random() * 256);
-
-    return {r,g,b};
+function generateRandomRGB() {
+    return {
+        r: Math.floor(Math.random() * 256),
+        g: Math.floor(Math.random() * 256),
+        b: Math.floor(Math.random() * 256),
+    };
 }
 
-function rgbToHsl(r,g,b){
-    
-    r = r/255;
-    g = g/255;
-    b = b/255;
+function rgbToHsl(r, g, b) {
+    r /= 255;
+    g /= 255;
+    b /= 255;
 
-    const max = Math.max (r,g,b);
-    const min = Math.min (r,g,b);
+    const max = Math.max(r, g, b);
+    const min = Math.min(r, g, b);
     const delta = max - min;
 
-
     const lightness = (max + min) / 2;
-    const saturation = delta === 0 ? 0 : delta / (1 - Math.abs (2* lightness-1));
+    const saturation = delta === 0 ? 0 : delta / (1 - Math.abs(2 * lightness - 1));
 
     let hue;
-
-    if (delta === 0){
+    if (delta === 0) {
         hue = 0;
-    } else if (max === r){
-        hue = ((g-b) / delta) % 6;
+    } else if (max === r) {
+        hue = ((g - b) / delta) % 6;
     } else if (max === g) {
-    hue = (b - r) / delta + 2;
-  } else {
-    hue = (r - g) / delta + 4;
-  }
+        hue = (b - r) / delta + 2;
+    } else {
+        hue = (r - g) / delta + 4;
+    }
 
-  hue = Math.round (hue * 60);
-  if (hue < 0) hue += 360;
+    hue = Math.round(hue * 60);
+    if (hue < 0) hue += 360;
 
-  return {
-
-    hue : hue,
-    saturation : Math.round(saturation * 100),
-    lightness : Math.round (lightness * 100)
-  };
-
+    return {
+        hue,
+        saturation: Math.round(saturation * 100),
+        lightness: Math.round(lightness * 100),
+    };
 }
 
+function rgbToHex(r, g, b) {
+    return '#' + [r, g, b]
+        .map((value) => value.toString(16).padStart(2, '0'))
+        .join('');
+}
 
-  function colorGenerator(){
-    const rgb = rgbGenerator();
-    const hsl = rgbToHsl(rgb.r,rgb.g,rgb.b);
+function getTextColor(r, g, b) {
+    const luminance = 0.299 * r + 0.587 * g + 0.114 * b;
+    return luminance > 190 ? '#000000' : '#ffffff';
+}
 
-    return{
-        rgb:rgb,
-        hsl:hsl,
-    }
-  }
+let palette = [];
+let userSelectSize = 6;
 
+const container = document.querySelector('.paletteGenerator');
+const paletteGeneratorBtn = document.querySelector('.paletteGeneratorBtn');
+const sizeBtns = document.querySelectorAll('.sizeBtn');
+const savedPaletteBtn = document.querySelector('.savedPaletteBtn');
+const paletteNameInput = document.querySelector('.paletteName');
+const toast = document.querySelector('.toast');
+const footer = document.querySelector('.gradientFooter');
 
+function fillPalette(size, { regenerateUnlocked = false } = {}) {
+    const next = [];
 
- function renderPalette(quantity){
-    const container = document.querySelector('.paletteGenerator');
-    container.innerHTML ='';
+    for (let i = 0; i < size; i++) {
+        const existing = palette[i];
 
-    for (let i = 0; i < quantity; i++){
-
-        let color = colorGenerator();
-
-        if (lockedColors[i]) {
-            color = lockedColors[i];
-        } else {color = colorGenerator()};
-
-            let r, g, b, hue, saturation, lightness;
-
-        if (lockedColors[i]) {
-            r = lockedColors[i].r;
-            g = lockedColors[i].g;
-            b = lockedColors[i].b;
-            const hsl = rgbToHsl(r, g, b);
-            hue = hsl.hue;
-            saturation = hsl.saturation;
-            lightness = hsl.lightness;
+        if (existing && (existing.locked || !regenerateUnlocked)) {
+            next.push(existing);
         } else {
-            const generated = colorGenerator();
-            r = generated.rgb.r;
-            g = generated.rgb.g;
-            b = generated.rgb.b;
-            hue = generated.hsl.hue;
-            saturation = generated.hsl.saturation;
-            lightness = generated.hsl.lightness;
+            next.push({ ...generateRandomRGB(), locked: false });
         }
+    }
 
+    palette = next;
+}
 
-       
-        const hex = rgbToHex(r,g,b);
+function renderPalette() {
+    container.innerHTML = '';
+
+    palette.forEach((color, index) => {
+        const { r, g, b, locked } = color;
+        const hsl = rgbToHsl(r, g, b);
+        const hex = rgbToHex(r, g, b);
         const colorName = ntc.name(hex)[1];
-
-        const card  = document.createElement('div');
-        card.classList.add("colorCard");
-        card.style.backgroundColor = `rgb(${r}, ${g}, ${b})`;
-
         const textColor = getTextColor(r, g, b);
-        card.style.color = textColor;
 
+        const card = document.createElement('article');
+        card.classList.add('colorCard');
+        card.style.backgroundColor = `rgb(${r}, ${g}, ${b})`;
+        card.style.color = textColor;
 
         card.innerHTML = `
             <div class="colorInfo">
-                <span class="rgbLabel">RGB</span>
-                <span class="rgbValue">${r}, ${g}, ${b}</span>
-                <span class="hslLabel">HSL</span>
-                <span class="hslValue">${hue}, ${saturation}, ${lightness}</span>
-                <button class="lockBtn">🔒</button>
+                <span class="rgbLabel" id="rgbLabel-${index}">RGB</span>
+                <button type="button" class="rgbValue" aria-labelledby="rgbLabel-${index}">${r}, ${g}, ${b}</button>
+                <span class="hslLabel" id="hslLabel-${index}">HSL</span>
+                <button type="button" class="hslValue" aria-labelledby="hslLabel-${index}">${hsl.hue}, ${hsl.saturation}%, ${hsl.lightness}%</button>
+                <button type="button" class="lockBtn${locked ? ' locked' : ''}" aria-pressed="${locked}" aria-label="${locked ? 'Unlock' : 'Lock'} this color">${locked ? '🔒' : '🔓'}</button>
             </div>
-            <span class="colorName">${colorName}</span>
+            <span class="colorName">${colorName} — ${hex.toUpperCase()}</span>
         `;
 
-
-
-
         container.appendChild(card);
-        const rgbValue = card.querySelector('.rgbValue');
-        const hslValue = card.querySelector('.hslValue');
 
-    rgbValue.addEventListener('click', function() {
-    navigator.clipboard.writeText(`${r}, ${g}, ${b}`);
-    showToast('RGB copied!');
-});
+        card.querySelector('.rgbValue').addEventListener('click', () => {
+            navigator.clipboard.writeText(`${r}, ${g}, ${b}`);
+            showToast('RGB copied!');
+        });
 
-    hslValue.addEventListener('click', function() {
-    navigator.clipboard.writeText(`${hue}, ${saturation}%, ${lightness}%`);
-    showToast('HSL copied!');
-});
-      const lockBtn = card.querySelector('.lockBtn');
+        card.querySelector('.hslValue').addEventListener('click', () => {
+            navigator.clipboard.writeText(`${hsl.hue}, ${hsl.saturation}%, ${hsl.lightness}%`);
+            showToast('HSL copied!');
+        });
 
-      lockBtn.addEventListener('click', function() {
-        if (lockedColors[i]) {
-            lockedColors[i] = null;
-            lockBtn.classList.remove('locked');
-        } else {
-            lockedColors[i] = {r,g,b};
-            lockBtn.classList.add('locked');
-        }
-      });
-
-
-    }
-    
-    updateGradient();
-
-  }
-
-const paletteGeneratorBtn = document.querySelector('.paletteGeneratorBtn');
-
-paletteGeneratorBtn.addEventListener('click', function() {renderPalette(userSelectSize)});
-
-let userSelectSize = 6;
-let lockedColors = [];
-const sizeBtn = document.querySelectorAll('.sizeBtn');
-
-sizeBtn.forEach(function(btn) {
-
-    btn.addEventListener('click', function(){
-        userSelectSize = Number(btn.dataset.size);
-        sizeBtn.forEach(function(b){
-            b.classList.remove('active');
-        })
-
-        btn.classList.add('active');
-        renderPalette(userSelectSize);
-    })
-});
-
-function updateGradient(){
-    const footer = document.querySelector('.gradientFooter');
-    const cards = document.querySelectorAll('.colorCard');
-    const colors = [];
-
-    cards.forEach(function(card){
-        colors.push(card.style.backgroundColor);
+        card.querySelector('.lockBtn').addEventListener('click', () => {
+            palette[index].locked = !palette[index].locked;
+            renderPalette();
+        });
     });
 
-    footer.style.background = `linear-gradient(to right, ${colors.join(', ')})`;
-
+    updateGradient();
 }
 
-function rgbToHex(r,g,b){
-    return '#' + [r,g,b].map(function(value){
-        return value.toString(16).padStart(2,'0');
-    }).join('');
+function updateGradient() {
+    const colors = palette.map(({ r, g, b }) => `rgb(${r}, ${g}, ${b})`);
+    footer.style.background = `linear-gradient(to right, ${colors.join(', ')})`;
 }
 
 function showToast(message) {
-    const toast = document.querySelector('.toast');
     toast.textContent = message;
     toast.classList.add('visible');
-    setTimeout(function() {
-    toast.classList.remove('visible');
-    }, 2000);
-
+    clearTimeout(showToast._timer);
+    showToast._timer = setTimeout(() => toast.classList.remove('visible'), 2000);
 }
 
-const savedPaletteBtn = document.querySelector('.savedPaletteBtn');
-const paletteName = document.querySelector('.paletteName');
+paletteGeneratorBtn.addEventListener('click', () => {
+    fillPalette(userSelectSize, { regenerateUnlocked: true });
+    renderPalette();
+});
 
-savedPaletteBtn.addEventListener('click', function(){
+sizeBtns.forEach((btn) => {
+    btn.addEventListener('click', () => {
+        userSelectSize = Number(btn.dataset.size);
 
-    const name = paletteName.value;
+        sizeBtns.forEach((b) => {
+            b.classList.remove('active');
+            b.setAttribute('aria-pressed', 'false');
+        });
+        btn.classList.add('active');
+        btn.setAttribute('aria-pressed', 'true');
 
-    if (!name){
+        fillPalette(userSelectSize, { regenerateUnlocked: false });
+        renderPalette();
+    });
+});
+
+savedPaletteBtn.addEventListener('click', () => {
+    const name = paletteNameInput.value.trim();
+
+    if (!name) {
         showToast('Please enter a palette name');
         return;
     }
 
-    const cards = document.querySelectorAll('.colorCard');
-    const colors = [];
-
-    cards.forEach(function(card) {
-        colors.push(card.style.backgroundColor)
-    });
-
-    const palette ={
-        name : name,
-        colors : colors,
-    }
-
+    const colors = palette.map(({ r, g, b }) => `rgb(${r}, ${g}, ${b})`);
     const savedPalettes = JSON.parse(localStorage.getItem('palettes') || '[]');
 
-    savedPalettes.push(palette);
+    savedPalettes.push({ name, colors });
     localStorage.setItem('palettes', JSON.stringify(savedPalettes));
-    showToast(`Palette "${name}" saved!`);
-    paletteName.value = '';
 
+    showToast(`Palette "${name}" saved!`);
+    paletteNameInput.value = '';
 });
 
-function getTextColor (r,g,b){
-    const luminance = (0.299 * r + 0.587 * g + 0.114 * b);
-    return luminance > 190 ? '#000000' : '#ffffff';
-
-}
+fillPalette(userSelectSize, { regenerateUnlocked: true });
+renderPalette();

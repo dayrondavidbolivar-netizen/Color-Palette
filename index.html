@@ -3,36 +3,36 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Colorfly Study Color Palette Generator</title>
-    <link rel= "stylesheet" href="reset.css"> 
-    <link rel= "stylesheet" href="style.css"> 
-
+    <title>Colorfly Studio — Color Palette Generator</title>
+    <link rel="stylesheet" href="reset.css">
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <header>
-        <button class= "mainMenu">&#9776;</button>
+        <button class="mainMenu" type="button" aria-label="Open menu">&#9776;</button>
 
+        <div class="sizeControl" role="group" aria-labelledby="sizeTitle">
+            <span class="sizeTitle" id="sizeTitle">Palette Size</span>
+            <button class="sizeBtn active" type="button" data-size="6" aria-pressed="true">6</button>
+            <button class="sizeBtn" type="button" data-size="8" aria-pressed="false">8</button>
+            <button class="sizeBtn" type="button" data-size="9" aria-pressed="false">9</button>
+        </div>
 
-        <span class="sizeTitle">Palette Size</span>
-        
-        <button class="sizeBtn active" data-size="6">6</button>
-        <button class="sizeBtn" data-size="8">8</button>
-        <button class="sizeBtn" data-size="9">9</button>
+        <button class="paletteGeneratorBtn" type="button">Generate Palette</button>
 
-        <button class="paletteGeneratorBtn">Generate Palette</button>
-
-        <input type="text" class="paletteName" placeholder="Name your palette" />
-        <button class="savePaletteBtn">&#9875;</button>
+        <label class="visually-hidden" for="paletteName">Palette name</label>
+        <input type="text" id="paletteName" class="paletteName" placeholder="Name your palette">
+        <button class="savedPaletteBtn" type="button" aria-label="Save palette">&#9875;</button>
 
         <samp class="branding">Colorfly <strong>Studio</strong></samp>
-
     </header>
 
+    <main class="paletteGenerator" aria-live="polite" aria-label="Generated color palette"></main>
 
-    <main class="paletteGenerator"> </main>
-    <div class="toast"></div>
+    <div class="toast" role="status" aria-live="polite"></div>
 
-    <footer class="gradientFooter"></footer>
+    <footer class="gradientFooter" aria-hidden="true"></footer>
+
     <script src="ntc.js"></script>
     <script src="app.js"></script>
 </body>
