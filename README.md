@@ -1,7 +1,7 @@
 # Colorfly Studio — Color Palette Generator
 
 A static, interactive web app for generating random color palettes, with color locking, copy-to-clipboard, and local palette saving.
-
+https://dayrondavidbolivar-netizen.github.io/Color-Palette/
 ## Local demo
 
 No build step or dependencies required. It's plain HTML, CSS, and JS.
